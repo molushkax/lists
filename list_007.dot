@@ -1,0 +1,116 @@
+digraph list {
+  rankdir=TB;
+  splines=ortho;
+  nodesep=0.6;
+  ranksep=1.0;
+  node [shape=none, fontname="Helvetica", fontsize=11];
+  edge [fontname="Helvetica", fontsize=10, arrowsize=0.8];
+
+  n0 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#FFEBEE" COLOR="#B71C1C">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>0</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 67</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 1</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 2</TD></TR>
+    </TABLE>
+  >];
+
+  n1 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#FFEBEE" COLOR="#B71C1C">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>1</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 15</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 3</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 0</TD></TR>
+    </TABLE>
+  >];
+
+  n2 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#FFEBEE" COLOR="#B71C1C">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>2</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 25</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 0</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 4</TD></TR>
+    </TABLE>
+  >];
+
+  n3 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#FFEBEE" COLOR="#B71C1C">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>3</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 17</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 4</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 1</TD></TR>
+    </TABLE>
+  >];
+
+  n4 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#FFEBEE" COLOR="#B71C1C">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>4</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 18</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 2</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 3</TD></TR>
+    </TABLE>
+  >];
+
+  n5 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#F5F5F5" COLOR="#BDBDBD">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>5</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 0</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 6</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 777</TD></TR>
+    </TABLE>
+  >];
+
+  n6 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#F5F5F5" COLOR="#BDBDBD">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>6</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 0</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 7</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 777</TD></TR>
+    </TABLE>
+  >];
+
+  n7 [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#F5F5F5" COLOR="#BDBDBD">
+      <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>7</B></TD></TR>
+      <TR><TD PORT="data" WIDTH="60">data: 0</TD></TR>
+      <TR><TD PORT="next" ALIGN="LEFT" WIDTH="60">next: 777</TD></TR>
+      <TR><TD PORT="prev" ALIGN="RIGHT" WIDTH="60">prev: 777</TD></TR>
+    </TABLE>
+  >];
+
+  phantom5 [shape=point, style=invis, width=0, height=0];
+  phantom6 [shape=point, style=invis, width=0, height=0];
+  phantom7 [shape=point, style=invis, width=0, height=0];
+  { rank=same; n0; n1; n2; n3; n4; phantom5; phantom6; phantom7; }
+  { rank=same; n5; n6; n7; }
+
+  phantom5 -> n5 [style=invis, weight=100];
+  phantom6 -> n6 [style=invis, weight=100];
+  phantom7 -> n7 [style=invis, weight=100];
+  n0 -> n1 [style=invis, weight=10];
+  n1 -> n2 [style=invis, weight=10];
+  n2 -> n3 [style=invis, weight=10];
+  n3 -> n4 [style=invis, weight=10];
+  n4 -> phantom5 [style=invis, weight=10];
+  phantom5 -> phantom6 [style=invis, weight=10];
+  phantom6 -> phantom7 [style=invis, weight=10];
+  n0:next:e -> n1:data:w [style=bold, color="#D32F2F", penwidth=2, constraint=false];
+  n1:next:e -> n3:data:w [style=bold, color="#D32F2F", penwidth=2, constraint=false];
+  n2:next:e -> n0:data:w [style=bold, color="#D32F2F", penwidth=2, constraint=false];
+  n3:next:e -> n4:data:w [style=bold, color="#D32F2F", penwidth=2, constraint=false];
+  n4:next:e -> n2:data:w [style=bold, color="#D32F2F", penwidth=2, constraint=false];
+  n0:prev:w -> n2:data:e [style=bold, color="#1976D2", penwidth=2, constraint=false];
+  n1:prev:w -> n0:data:e [style=bold, color="#1976D2", penwidth=2, constraint=false];
+  n2:prev:w -> n4:data:e [style=bold, color="#1976D2", penwidth=2, constraint=false];
+  n3:prev:w -> n1:data:e [style=bold, color="#1976D2", penwidth=2, constraint=false];
+  n4:prev:w -> n3:data:e [style=bold, color="#1976D2", penwidth=2, constraint=false];
+  n5:next:e -> n6:data:w [style=dashed, color="#757575", penwidth=1.5, constraint=false];
+  n6:next:e -> n7:data:w [style=dashed, color="#757575", penwidth=1.5, constraint=false];
+
+  head_label [shape=box, style="filled", fillcolor="#FFCDD2", color="#D32F2F", label="head"];
+  tail_label [shape=box, style="filled", fillcolor="#BBDEFB", color="#1976D2", label="tail"];
+  free_label [shape=box, style="filled", fillcolor="#E0E0E0", color="#757575", label="free"];
+  head_label -> n1:idx:w [style=dotted, color="#D32F2F", constraint=false];
+  tail_label -> n2:idx:e [style=dotted, color="#1976D2", constraint=false];
+  free_label -> n5:idx:w [style=dotted, color="#757575", constraint=false];
+}

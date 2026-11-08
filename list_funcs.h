@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <assert.h>
 
 #define POISON_VALUE 777
@@ -70,7 +71,6 @@ struct info_about_list {
 #define LIST_ASSERT(list) do { \
     int _n = list_verify_func (list, __FUNCTION__, __LINE__); \
     if (_n != 0) { \
-        list_dump (list); \
         fprintf (stderr, RED "LIST_ASSERT failed (%d errors) at %s:%d\n" NO_COLOR, \
                 _n, __FILE__, __LINE__); \
         abort(); \
@@ -94,10 +94,30 @@ void list_destroy            (info_about_list* list);
 list_error delete_after_func (list_iterator_t place_before, info_about_list* list);
 void delete_after            (list_iterator_t place_before, info_about_list* list);
 
-int  list_verify_func     (info_about_list* list, const char* func, int line);
-void list_dump            (info_about_list* list);
+int  list_verify_func              (info_about_list* list, const char* func, int line);
+void list_dump_in_log              (info_about_list* list, FILE* out);
 void print_list_custom_error_func  (info_about_list* list, int error_code, const char* function_name, int line);
 void print_list_error_context_func (info_about_list* list, const char* func, int line);
 void list_dump_dot                 (info_about_list* list, const char* filename);
+
+FILE* list_log_open    (const char* filename);
+void  list_log_close   (FILE* log);
+void  list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* action_id);
+
+#define INSERT_AFTER(place, value, list, log, action_id) do { \
+    char buffer[128]; \
+    snprintf (buffer, sizeof (buffer), "insert_after (place = %zu, value = %d)", \
+              (size_t)place, (int)value); \
+    insert_after (place, value, list); \
+    list_log_actions (list, buffer, log, action_id); \
+} while (0)
+
+#define DELETE_AFTER(place, list, log, action_id) do { \
+    char buffer[128]; \
+    snprintf (buffer, sizeof (buffer), "delete_after (place = %zu)", \
+              (size_t)place); \
+    delete_after (place, list); \
+    list_log_actions (list, buffer, log, action_id); \
+} while (0)
 
 #endif

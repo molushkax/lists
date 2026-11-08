@@ -265,33 +265,33 @@ int list_verify_func (info_about_list* list, const char* func, int line) {
     return 0;
 }
 
-void list_dump (info_about_list* list) {
+void list_dump_in_log (info_about_list* list, FILE* out) {
     assert (list != NULL);
 
-    printf ("---------------------------------\n");
-    printf ("head: %zu | tail: %zu | first_free: %zu\n", list->list_array[0].next, list->list_array[0].prev, list->first_free);
-    printf ("number of elements in list: %zu\n", list->number_of_elements);
-    printf ("---------------------------------\n");
+    fprintf (out, "---------------------------------\n");
+    fprintf (out, "head: %zu | tail: %zu | first_free: %zu\n", list->list_array[0].next, list->list_array[0].prev, list->first_free);
+    fprintf (out, "number of elements in list: %zu\n", list->number_of_elements);
+    fprintf (out, "---------------------------------\n");
 
     #ifndef NDEBUG
-        printf ("left  canary of struct with info about list: 0x%zX\n", list->canary_l);
-        printf ("right canary of struct with info about list: 0x%zX\n", list->canary_r);
-        printf ("---------------------------------\n");
-        printf ("left  canary of list: 0x%zX\n", list->list_array[-1].data);
-        printf ("right canary of list: 0x%zX\n", list->list_array[list->max_number_of_elements].data);
-        printf ("---------------------------------\n");
+        fprintf (out, "left  canary of struct with info about list: 0x%zX\n", list->canary_l);
+        fprintf (out, "right canary of struct with info about list: 0x%zX\n", list->canary_r);
+        fprintf (out, "---------------------------------\n");
+        fprintf (out, "left  canary of list: 0x%zX\n", list->list_array[-1].data);
+        fprintf (out, "right canary of list: 0x%zX\n", list->list_array[list->max_number_of_elements].data);
+        fprintf (out, "---------------------------------\n");
     #endif
 
-    printf ("index |  data  |  next  |  prev \n");
-    printf ("---------------------------------\n");
+    fprintf (out, "index |  data  |  next  |  prev \n");
+    fprintf (out, "---------------------------------\n");
 
     for (list_iterator_t i = 0; i < list->max_number_of_elements; i++) {
-        printf ("%5zu | %6d | %6zu | %6zu\n", i, (list->list_array[i]).data, (list->list_array[i]).next, (list->list_array[i]).prev);
+        fprintf (out, "%5zu | %6d | %6zu | %6zu\n", i, (list->list_array[i]).data, (list->list_array[i]).next, (list->list_array[i]).prev);
     }
-    printf ("\n======================================\n");
+    fprintf (out, "\n======================================\n");
 }
 
-void list_dump_dot(info_about_list* list, const char* filename) {
+void list_dump_dot (info_about_list* list, const char* filename) {
     if (!list || !filename) return;
 
     FILE* f = fopen(filename, "w");
@@ -461,4 +461,53 @@ void list_destroy (info_about_list* list) {
     list->first_free = POISON_VALUE;
     list->max_number_of_elements = 0;
     list->hash = 0;
+}
+
+FILE* list_log_open (const char* filename) {
+    FILE* log = fopen (filename, "w");
+    if (!log) return NULL;
+    fprintf (log,
+        "<!DOCTYPE html>\n"
+        "<html>\n"
+        "<head>\n"
+        "<meta charset=\"utf-8\">\n"
+        "<title>list log</title>\n"
+        "</head>\n"
+        "<body>\n");
+
+    return log;
+}
+
+void list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* action_id) {
+    assert (list != NULL);
+    assert (log != NULL);
+    assert (action_id != NULL);
+
+    fprintf (log, "<h3>#%d: %s</h3>\n", ++(*action_id), cmd);
+
+    fprintf (log, "<pre>");
+    list_dump_in_log (list, log);
+    fprintf (log, "</pre>\n");
+
+    char svg_name[64];
+    snprintf(svg_name, sizeof svg_name, "list_%03d.svg", *action_id);
+
+    char dot_name[64];
+    snprintf(dot_name, sizeof dot_name, "list_%03d.dot", *action_id);
+
+    list_dump_dot(list, dot_name);
+
+    char cmdline[128];
+    snprintf(cmdline, sizeof cmdline, "dot -Tsvg %s -o %s", dot_name, svg_name);
+    system(cmdline);
+
+    fprintf(log, "<img src=\"%s\" width=\"900\"><br><br>\n", svg_name);
+    fflush(log);
+}
+
+void list_log_close (FILE* log) {
+    assert (log != NULL);
+
+    fprintf (log, "</body>\n</html>\n");
+    fclose  (log);
 }
