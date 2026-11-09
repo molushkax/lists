@@ -56,21 +56,16 @@ list_error insert_after_func (list_iterator_t place_before, list_elem_t value, i
         if (realloc_up_array (list) != LIST_OK) return LIST_ERROR_WITH_REALLOCATION;
     }
 
-    list_iterator_t index_of_next_element = 0;
-    for (list_iterator_t i = 0; i < place_before; i++) {
-        index_of_next_element = list->list_array[index_of_next_element].next;
-    }
-
     list_iterator_t new_index = list->first_free;
     list->first_free = list->list_array[new_index].next;
 
-    list_iterator_t next_element = list->list_array[index_of_next_element].next;
+    list_iterator_t next_element = list->list_array[place_before].next;
 
-    list->list_array[new_index].prev = index_of_next_element;
+    list->list_array[new_index].prev = place_before;
     list->list_array[new_index].data = value;
     list->list_array[new_index].next = next_element;
 
-    list->list_array[index_of_next_element].next = new_index;
+    list->list_array[place_before].next = new_index;
     list->list_array[next_element].prev = new_index;
 
     list->number_of_elements++;
@@ -129,20 +124,15 @@ list_error delete_after_func (list_iterator_t place_before, info_about_list* lis
         return LIST_DELETE_NON_EXISTENT;
     }
 
-    list_iterator_t index_of_next_element = 0;
-    for (list_iterator_t i = 0; i < place_before; i++) {
-        index_of_next_element = list->list_array[index_of_next_element].next;
-    }
-
-    list_iterator_t delete_element = list->list_array[index_of_next_element].next;
+    list_iterator_t delete_element = list->list_array[place_before].next;
     if (delete_element == 0) {
         fprintf (stderr, RED "\nERROR: nothing to remove after this element\n" NO_COLOR);
         return LIST_DELETE_NON_EXISTENT;
     }
 
     list_iterator_t after_delete_element = list->list_array[delete_element].next;
-    list->list_array[index_of_next_element].next = after_delete_element;
-    list->list_array[after_delete_element].prev = index_of_next_element;
+    list->list_array[place_before].next = after_delete_element;
+    list->list_array[after_delete_element].prev = place_before;
 
     list->list_array[delete_element].data = 0;
     list->list_array[delete_element].prev = POISON_VALUE;
@@ -165,6 +155,30 @@ void delete_after (list_iterator_t place_before, info_about_list* list) {
     if (err != LIST_OK) LIST_VERIFY(list);
 }
 
+list_iterator_t iterator_next (info_about_list* list, list_iterator_t iterator) {
+    LIST_ASSERT(list);
+
+    list_iterator_t next_iterator = list->list_array[iterator].next;
+
+    return next_iterator;
+}
+
+list_iterator_t get_head (info_about_list* list) {
+    LIST_ASSERT (list);
+
+    list_iterator_t head_iterator = list->list_array[0].next;
+
+    return head_iterator;
+}
+
+list_iterator_t get_tail (info_about_list* list) {
+    LIST_ASSERT (list);
+
+    list_iterator_t tail_iterator = list->list_array[0].prev;
+
+    return tail_iterator;
+}
+
 int list_verify_func (info_about_list* list, const char* func, int line) {
     int n = 0;
 
@@ -173,6 +187,14 @@ int list_verify_func (info_about_list* list, const char* func, int line) {
             fprintf (stderr, RED "\nERROR: list pointer is NULL\n" NO_COLOR);
         }
         return 1;
+    }
+
+    if (list->first_free == 0) {
+        if (strstr (func, "test_list") == NULL) {
+            fprintf (stderr, RED "\nERROR: NULL element is like free\n" NO_COLOR);
+            print_list_error_context_func (list, func, line);
+        }
+        n++;
     }
 
     if (list->canary_l != LIST_CANARY_L) {
@@ -201,7 +223,7 @@ int list_verify_func (info_about_list* list, const char* func, int line) {
             print_list_error_context_func (list, func, line);
         }
         return n + 1;
-    } //TODO дописать
+    }
 
     if (list->list_array[-1].data != DATA_CANARY_VALUE1) {
         if (strstr (func, "test_list") == NULL) {
@@ -315,8 +337,8 @@ void list_dump_dot (info_about_list* list, const char* filename) {
         fprintf(f, "    <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"%s\" COLOR=\"%s\">\n", fillcolor, bordercolor);
         fprintf(f, "      <TR><TD PORT=\"idx\" BGCOLOR=\"#E3E3E3\" WIDTH=\"40\"><B>%zu</B></TD></TR>\n", i);
         fprintf(f, "      <TR><TD PORT=\"data\" WIDTH=\"60\">data: %d</TD></TR>\n", n->data);
-        fprintf(f, "      <TR><TD PORT=\"next\" ALIGN=\"LEFT\" WIDTH=\"60\">next: %zu</TD></TR>\n", n->next);
-        fprintf(f, "      <TR><TD PORT=\"prev\" ALIGN=\"RIGHT\" WIDTH=\"60\">prev: %zu</TD></TR>\n", n->prev);
+        fprintf(f, "      <TR><TD PORT=\"next\" WIDTH=\"60\">next: %zu</TD></TR>\n", n->next);
+        fprintf(f, "      <TR><TD PORT=\"prev\" WIDTH=\"60\">prev: %zu</TD></TR>\n", n->prev);
         fprintf(f, "    </TABLE>\n  >];\n\n");
     }
 
@@ -368,24 +390,22 @@ void list_dump_dot (info_about_list* list, const char* filename) {
     }
 
     // некст красные
-    // справа (:e) налево (:w).
     for (size_t i = 0; i < list->max_number_of_elements; i++) {
         node* n = &list->list_array[i];
         bool is_free = (n->prev == POISON_VALUE && n->data == 0);
 
         if (!is_free && n->next < list->max_number_of_elements && n->next != POISON_VALUE) {
-            fprintf(f, "  n%zu:next:e -> n%zu:data:w [style=bold, color=\"#D32F2F\", penwidth=2, constraint=false];\n", i, n->next);
+            fprintf(f, "  n%zu -> n%zu [style=bold, color=\"#D32F2F\", penwidth=2, constraint=false];\n", i, n->next);
         }
     }
 
     // синие прев
-    // слева (:w) направо (:e).
     for (size_t i = 0; i < list->max_number_of_elements; i++) {
         node* n = &list->list_array[i];
         bool is_free = (n->prev == POISON_VALUE && n->data == 0);
 
         if (!is_free && n->prev < list->max_number_of_elements && n->prev != POISON_VALUE) {
-            fprintf(f, "  n%zu:prev:w -> n%zu:data:e [style=bold, color=\"#1976D2\", penwidth=2, constraint=false];\n", i, n->prev);
+            fprintf(f, "  n%zu -> n%zu [style=bold, color=\"#1976D2\", penwidth=2, constraint=false];\n", i, n->prev);
         }
     }
 
@@ -395,7 +415,7 @@ void list_dump_dot (info_about_list* list, const char* filename) {
         bool is_free = (n->prev == POISON_VALUE && n->data == 0);
 
         if (is_free && n->next < list->max_number_of_elements && n->next != POISON_VALUE) {
-            fprintf(f, "  n%zu:next:e -> n%zu:data:w [style=dashed, color=\"#757575\", penwidth=1.5, constraint=false];\n", i, n->next);
+            fprintf(f, "  n%zu -> n%zu [style=dashed, color=\"#757575\", penwidth=1.5, constraint=false];\n", i, n->next);
         }
     }
 
@@ -405,13 +425,13 @@ void list_dump_dot (info_about_list* list, const char* filename) {
     fprintf(f, "  free_label [shape=box, style=\"filled\", fillcolor=\"#E0E0E0\", color=\"#757575\", label=\"free\"];\n");
 
     if (list->list_array[0].next < list->max_number_of_elements) {
-        fprintf(f, "  head_label -> n%zu:idx:w [style=dotted, color=\"#D32F2F\", constraint=false];\n", list->list_array[0].next);
+        fprintf(f, "  head_label -> n%zu [style=dotted, color=\"#D32F2F\", constraint=false];\n", list->list_array[0].next);
     }
     if (list->list_array[0].prev < list->max_number_of_elements) {
-        fprintf(f, "  tail_label -> n%zu:idx:e [style=dotted, color=\"#1976D2\", constraint=false];\n", list->list_array[0].prev);
+        fprintf(f, "  tail_label -> n%zu [style=dotted, color=\"#1976D2\", constraint=false];\n", list->list_array[0].prev);
     }
     if (list->first_free < list->max_number_of_elements) {
-        fprintf(f, "  free_label -> n%zu:idx:w [style=dotted, color=\"#757575\", constraint=false];\n", list->first_free);
+        fprintf(f, "  free_label -> n%zu [style=dotted, color=\"#757575\", constraint=false];\n", list->first_free);
     }
 
     fprintf(f, "}\n");
@@ -469,7 +489,6 @@ FILE* list_log_open (const char* filename) {
         "<!DOCTYPE html>\n"
         "<html>\n"
         "<head>\n"
-        "<meta charset=\"utf-8\">\n"
         "<title>list log</title>\n"
         "</head>\n"
         "<body>\n");

@@ -40,8 +40,6 @@ enum list_error {
     LIST_BAD_TAIL,
     LIST_BAD_SIZE,
     LIST_BAD_FREE_LIST,
-    LIST_CYCLE,
-    LIST_BAD_PREV_NEXT,
     LIST_DELETE_NON_EXISTENT,
     LIST_ERROR_WITH_REALLOCATION,
     LIST_ERROR_WITH_ALLOCATION,
@@ -85,14 +83,16 @@ struct info_about_list {
 
 void list_set_canaries (info_about_list* list);
 bool list_canaries_ok  (const info_about_list* list);
-
-list_error list_init         (info_about_list* list, size_t size_of_list);
-list_error insert_after_func (list_iterator_t place_before, list_elem_t value, info_about_list* list);
-void insert_after            (list_iterator_t place_before, list_elem_t value, info_about_list* list);
-list_error realloc_up_array  (info_about_list* list);
-void list_destroy            (info_about_list* list);
-list_error delete_after_func (list_iterator_t place_before, info_about_list* list);
-void delete_after            (list_iterator_t place_before, info_about_list* list);
+list_error list_init   (info_about_list* list, size_t size_of_list);
+list_error insert_after_func  (list_iterator_t place_before, list_elem_t value, info_about_list* list);
+void insert_after             (list_iterator_t place_before, list_elem_t value, info_about_list* list);
+list_error realloc_up_array   (info_about_list* list);
+void list_destroy             (info_about_list* list);
+list_error delete_after_func  (list_iterator_t place_before, info_about_list* list);
+void delete_after             (list_iterator_t place_before, info_about_list* list);
+list_iterator_t iterator_next (info_about_list* list, list_iterator_t iterator);
+list_iterator_t get_head      (info_about_list* list);
+list_iterator_t get_tail      (info_about_list* list);
 
 int  list_verify_func              (info_about_list* list, const char* func, int line);
 void list_dump_in_log              (info_about_list* list, FILE* out);
