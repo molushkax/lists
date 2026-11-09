@@ -104,7 +104,7 @@ FILE* list_log_open    (const char* filename);
 void  list_log_close   (FILE* log);
 void  list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* action_id);
 
-#define INSERT_AFTER(place, value, list, log, action_id) do { \
+#define INSERT_AFTER_LOG(place, value, list, log, action_id) do { \
     char buffer[128]; \
     snprintf (buffer, sizeof (buffer), "insert_after (place = %zu, value = %d)", \
               (size_t)place, (int)value); \
@@ -112,12 +112,15 @@ void  list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* 
     list_log_actions (list, buffer, log, action_id); \
 } while (0)
 
-#define DELETE_AFTER(place, list, log, action_id) do { \
+#define DELETE_AFTER_LOG(place, list, log, action_id) do { \
     char buffer[128]; \
     snprintf (buffer, sizeof (buffer), "delete_after (place = %zu)", \
               (size_t)place); \
     delete_after (place, list); \
     list_log_actions (list, buffer, log, action_id); \
 } while (0)
+
+#define INSERT_AFTER(place, value, list) INSERT_AFTER_LOG(place, value, list, log, &action_id)
+#define DELETE_AFTER(place, list)        DELETE_AFTER_LOG(place, list, log, &action_id)
 
 #endif

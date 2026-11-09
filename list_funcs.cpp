@@ -114,7 +114,6 @@ list_error realloc_up_array (info_about_list* list) {
 
     list->first_free = old_max;
     list->max_number_of_elements = new_max;
-    printf ("%zu number of elements\n", list->number_of_elements);
 
     list_update_hash(list);
 
@@ -483,25 +482,34 @@ void list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* a
     assert (log != NULL);
     assert (action_id != NULL);
 
-    fprintf (log, "<h3>#%d: %s</h3>\n", ++(*action_id), cmd);
+    fprintf (log, "<h3>№%d: %s</h3>\n", ++(*action_id), cmd);
 
     fprintf (log, "<pre>");
     list_dump_in_log (list, log);
     fprintf (log, "</pre>\n");
 
-    char svg_name[64];
-    snprintf(svg_name, sizeof svg_name, "list_%03d.svg", *action_id);
-
-    char dot_name[64];
-    snprintf(dot_name, sizeof dot_name, "list_%03d.dot", *action_id);
+    char dot_name[] = "temp_dump.dot";
+    char svg_name[] = "temp_dump.svg";
 
     list_dump_dot(list, dot_name);
 
-    char cmdline[128];
-    snprintf(cmdline, sizeof cmdline, "dot -Tsvg %s -o %s", dot_name, svg_name);
+    char cmdline[256];
+    snprintf(cmdline, sizeof(cmdline), "dot -Tsvg %s -o %s", dot_name, svg_name);
     system(cmdline);
 
-    fprintf(log, "<img src=\"%s\" width=\"900\"><br><br>\n", svg_name);
+    FILE* temp_svg = fopen (svg_name, "r");
+    if (temp_svg != NULL) {
+        char line[2048];
+        while (fgets (line, sizeof (line), temp_svg)) {
+            fprintf (log, "%s", line);
+        }
+        fprintf (log, "</div>\n");
+        fclose (temp_svg);
+    }
+
+    remove (dot_name);
+    remove (svg_name);
+
     fflush(log);
 }
 
