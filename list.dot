@@ -85,10 +85,18 @@ digraph list {
   { rank=same; n0; n1; phantom2; n3; n4; phantom5; phantom6; phantom7; }
   { rank=same; n2; n5; n6; n7; }
 
-  phantom2 -> n2 [style=invis, weight=100];
-  phantom5 -> n5 [style=invis, weight=100];
-  phantom6 -> n6 [style=invis, weight=100];
-  phantom7 -> n7 [style=invis, weight=100];
+  phantom0 [shape=point, style=invis, width=0, height=0];
+  phantom1 [shape=point, style=invis, width=0, height=0];
+  phantom2 [shape=point, style=invis, width=0, height=0];
+  phantom3 [shape=point, style=invis, width=0, height=0];
+  phantom4 [shape=point, style=invis, width=0, height=0];
+  phantom5 [shape=point, style=invis, width=0, height=0];
+  phantom6 [shape=point, style=invis, width=0, height=0];
+  phantom7 [shape=point, style=invis, width=0, height=0];
+  phantom2 -> n2 [style=invis, weight=1];
+  phantom5 -> n5 [style=invis, weight=1];
+  phantom6 -> n6 [style=invis, weight=1];
+  phantom7 -> n7 [style=invis, weight=1];
   n0 -> n1 [style=invis, weight=10];
   n1 -> phantom2 [style=invis, weight=10];
   phantom2 -> n3 [style=invis, weight=10];
@@ -109,8 +117,8 @@ digraph list {
   n6 -> n7 [style=dashed, color="#757575", penwidth=1.5, constraint=false];
 
   head_label [shape=box, style="filled", fillcolor="#FFCDD2", color="#D32F2F", label="head"];
-  tail_label [shape=box, style="filled", fillcolor="#BBDEFB", color="#1976D2", label="tail"];
-  free_label [shape=box, style="filled", fillcolor="#E0E0E0", color="#757575", label="free"];
+  tail_label   [shape=box, style="filled", fillcolor="#BBDEFB", color="#1976D2", label="tail"];
+  free_label   [shape=box, style="filled", fillcolor="#E0E0E0", color="#757575", label="free"];
   head_label -> n1 [style=dotted, color="#D32F2F", constraint=false];
   tail_label -> n4 [style=dotted, color="#1976D2", constraint=false];
   free_label -> n2 [style=dotted, color="#757575", constraint=false];

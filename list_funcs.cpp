@@ -313,7 +313,7 @@ void list_dump_in_log (info_about_list* list, FILE* out) {
 }
 
 void list_dump_dot (info_about_list* list, const char* filename) {
-    if (!list || !filename) return;
+    if (list == NULL || !filename) return;
 
     FILE* f = fopen(filename, "w");
     if (!f) return;
@@ -351,7 +351,7 @@ void list_dump_dot (info_about_list* list, const char* filename) {
         }
     }
 
-    // по рядам расставляем
+    // по рядам строим
     fprintf(f, "  { rank=same; ");
     for (size_t i = 0; i < list->max_number_of_elements; i++) {
         node* n = &list->list_array[i];
@@ -369,12 +369,16 @@ void list_dump_dot (info_about_list* list, const char* filename) {
     }
     fprintf(f, "}\n\n");
 
+    for (size_t i = 0; i < list->max_number_of_elements; i++) {
+        fprintf(f, "  phantom%zu [shape=point, style=invis, width=0, height=0];\n", i);
+    }
+
     // свободные с местами связываем
     for (size_t i = 0; i < list->max_number_of_elements; i++) {
         node* n = &list->list_array[i];
         bool is_free = (n->prev == POISON_VALUE && n->data == 0);
         if (is_free) {
-            fprintf(f, "  phantom%zu -> n%zu [style=invis, weight=100];\n", i, i);
+            fprintf(f, "  phantom%zu -> n%zu [style=invis, weight=1];\n", i, i);
         }
     }
 
@@ -399,7 +403,7 @@ void list_dump_dot (info_about_list* list, const char* filename) {
         }
     }
 
-    // синие прев
+    // прев синие
     for (size_t i = 0; i < list->max_number_of_elements; i++) {
         node* n = &list->list_array[i];
         bool is_free = (n->prev == POISON_VALUE && n->data == 0);
@@ -409,7 +413,7 @@ void list_dump_dot (info_about_list* list, const char* filename) {
         }
     }
 
-    // серые свободные
+    // свободные серые
     for (size_t i = 0; i < list->max_number_of_elements; i++) {
         node* n = &list->list_array[i];
         bool is_free = (n->prev == POISON_VALUE && n->data == 0);
@@ -421,15 +425,17 @@ void list_dump_dot (info_about_list* list, const char* filename) {
 
     // 9. метки
     fprintf(f, "\n  head_label [shape=box, style=\"filled\", fillcolor=\"#FFCDD2\", color=\"#D32F2F\", label=\"head\"];\n");
-    fprintf(f, "  tail_label [shape=box, style=\"filled\", fillcolor=\"#BBDEFB\", color=\"#1976D2\", label=\"tail\"];\n");
-    fprintf(f, "  free_label [shape=box, style=\"filled\", fillcolor=\"#E0E0E0\", color=\"#757575\", label=\"free\"];\n");
+    fprintf(f, "  tail_label   [shape=box, style=\"filled\", fillcolor=\"#BBDEFB\", color=\"#1976D2\", label=\"tail\"];\n");
+    fprintf(f, "  free_label   [shape=box, style=\"filled\", fillcolor=\"#E0E0E0\", color=\"#757575\", label=\"free\"];\n");
 
     if (list->list_array[0].next < list->max_number_of_elements) {
         fprintf(f, "  head_label -> n%zu [style=dotted, color=\"#D32F2F\", constraint=false];\n", list->list_array[0].next);
     }
+
     if (list->list_array[0].prev < list->max_number_of_elements) {
         fprintf(f, "  tail_label -> n%zu [style=dotted, color=\"#1976D2\", constraint=false];\n", list->list_array[0].prev);
     }
+
     if (list->first_free < list->max_number_of_elements) {
         fprintf(f, "  free_label -> n%zu [style=dotted, color=\"#757575\", constraint=false];\n", list->first_free);
     }
@@ -461,7 +467,9 @@ void print_list_error_context_func (info_about_list* list, const char* func, int
             list->first_free,
             list->canary_l,
             list->canary_r);
-    } else {
+    }
+
+    else {
         fprintf(stderr, "\n");
     }
 }

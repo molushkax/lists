@@ -1,5 +1,5 @@
-#ifndef LISTS_H
-#define LISTS_H
+#ifndef _LISTS_H_
+#define _LISTS_H_
 
 #define NDEBUG
 
@@ -20,8 +20,8 @@
 typedef int list_elem_t;
 typedef size_t list_iterator_t;
 
-const size_t LIST_CANARY_L = (size_t)0xBEDABE;
-const size_t LIST_CANARY_R = (size_t)0xBEDABED;
+const size_t LIST_CANARY_L = (size_t)0xBEDABEDA;
+const size_t LIST_CANARY_R = (size_t)0xBEDABEDAA;
 const int DATA_CANARY_VALUE1 = 666;
 const int DATA_CANARY_VALUE2 = 777;
 
