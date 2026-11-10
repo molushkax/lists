@@ -494,7 +494,6 @@ FILE* list_log_open (const char* filename) {
     FILE* log = fopen (filename, "w");
     if (!log) return NULL;
     fprintf (log,
-        "<!DOCTYPE html>\n"
         "<html>\n"
         "<head>\n"
         "<title>list log</title>\n"
@@ -509,14 +508,22 @@ void list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* a
     assert (log != NULL);
     assert (action_id != NULL);
 
+    fprintf (log, "<pre>\n");
     fprintf (log, "<h3>№%d: %s</h3>\n", ++(*action_id), cmd);
 
-    fprintf (log, "<pre>");
     list_dump_in_log (list, log);
-    fprintf (log, "</pre>\n");
 
-    char dot_name[] = "temp_dump.dot";
-    char svg_name[] = "temp_dump.svg";
+    char dot_name[128];
+    char svg_name[128];
+
+    #ifdef _WIN32
+        system ("mkdir graphviz 2>nul");
+    #else
+        system ("mkdir -p graphviz");
+    #endif
+
+    snprintf (dot_name, sizeof(dot_name), "graphviz/graph_%03d.dot", *action_id);
+    snprintf (svg_name, sizeof(dot_name), "graphviz/graph_%03d.svg", *action_id);
 
     list_dump_dot(list, dot_name);
 
@@ -524,18 +531,10 @@ void list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* a
     snprintf(cmdline, sizeof(cmdline), "dot -Tsvg %s -o %s", dot_name, svg_name);
     system(cmdline);
 
-    FILE* temp_svg = fopen (svg_name, "r");
-    if (temp_svg != NULL) {
-        char line[2048];
-        while (fgets (line, sizeof (line), temp_svg)) {
-            fprintf (log, "%s", line);
-        }
-        fprintf (log, "</div>\n");
-        fclose (temp_svg);
-    }
+    fprintf (log, "\n<img src=\"%s\" width=\"900\">\n", svg_name);
+    fprintf (log, "</pre>\n<br>\n");
 
     remove (dot_name);
-    remove (svg_name);
 
     fflush(log);
 }
