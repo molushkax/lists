@@ -517,13 +517,13 @@ void list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* a
     char svg_name[128];
 
     #ifdef _WIN32
-        system ("mkdir graphviz 2>nul");
+        system ("if not exist example_of_work\\graphviz mkdir example_of_work\\graphviz");
     #else
-        system ("mkdir -p graphviz");
+        system ("mkdir -p example_of_work\\graphviz");
     #endif
 
-    snprintf (dot_name, sizeof(dot_name), "graphviz/graph_%03d.dot", *action_id);
-    snprintf (svg_name, sizeof(dot_name), "graphviz/graph_%03d.svg", *action_id);
+    snprintf (dot_name, sizeof(dot_name), "example_of_work/graphviz/graph_%03d.dot", *action_id);
+    snprintf (svg_name, sizeof(svg_name), "example_of_work/graphviz/graph_%03d.svg", *action_id);
 
     list_dump_dot(list, dot_name);
 
@@ -531,7 +531,7 @@ void list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* a
     snprintf(cmdline, sizeof(cmdline), "dot -Tsvg %s -o %s", dot_name, svg_name);
     system(cmdline);
 
-    fprintf (log, "\n<img src=\"%s\" width=\"900\">\n", svg_name);
+    fprintf (log, "\n<img src=\"graphviz/graph_%03d.svg\" width=\"900\">\n", *action_id);
     fprintf (log, "</pre>\n<br>\n");
 
     remove (dot_name);
