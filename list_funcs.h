@@ -2,7 +2,7 @@
 #define _LISTS_H_
 
 #define NDEBUG
-
+//TODO README
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -66,13 +66,13 @@ struct info_about_list {
 #define LIST_PRINT_ERROR_CONTEXT(list) print_list_error_context_func (list, __FUNCTION__, __LINE__)
 #define LIST_PRINT_CUSTOM_ERROR(list, error_code) print_list_custom_error_func (list, error_code, __FUNCTION__, __LINE__)
 
-#define LIST_ASSERT(list) do { \
-    int _n = list_verify_func (list, __FUNCTION__, __LINE__); \
-    if (_n != 0) { \
+#define LIST_ASSERT(list) do {                                                     \
+    int _n = list_verify_func (list, __FUNCTION__, __LINE__);                      \
+    if (_n != 0) {                                                                 \
         fprintf (stderr, RED "LIST_ASSERT failed (%d errors) at %s:%d\n" NO_COLOR, \
-                _n, __FILE__, __LINE__); \
-        abort(); \
-    } \
+                _n, __FILE__, __LINE__);                                           \
+        abort();                                                                   \
+    }                                                                              \
 } while (0)
 
 #ifndef NDEBUG
@@ -104,12 +104,12 @@ FILE* list_log_open    (const char* filename);
 void  list_log_close   (FILE* log);
 void  list_log_actions (info_about_list* list, const char* cmd, FILE* log, int* action_id);
 
-#define INSERT_AFTER_LOG(place, value, list, log, action_id) do { \
-    char buffer[128]; \
+#define INSERT_AFTER_LOG(place, value, list, log, action_id) do {                \
+    char buffer[128];                                                            \
     snprintf (buffer, sizeof (buffer), "insert_after (place = %zu, value = %d)", \
-              (size_t)place, (int)value); \
-    insert_after (place, value, list); \
-    list_log_actions (list, buffer, log, action_id); \
+              (size_t)place, (int)value);                                        \
+    insert_after (place, value, list);                                           \
+    list_log_actions (list, buffer, log, action_id);                             \
 } while (0)
 
 #define DELETE_AFTER_LOG(place, list, log, action_id) do { \
