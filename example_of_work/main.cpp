@@ -4,7 +4,7 @@
 int main () {
     struct info_about_list list = {};
 
-    FILE* log = list_log_open ("list_log.html");
+    FILE* log = list_log_open ("example_of_work/list_log.html");
     if (log == NULL) return 1;
     list_init (&list, 4);
     int action_id = 0;
