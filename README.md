@@ -80,7 +80,7 @@ DELETE_AFTER(list_iterator_t* place, info_about_list* list);
  .\a.exe
 ```
 
-После запуска ожидайте в вашей папке появление list_log.html ([открыть пример list_log.html в браузере](https://molushkax.github.io/lists/example_of_work/list_log.html))- пошагового отчета и папки graphviz/ с .svg файлами ([пример](example_of_work/graphviz))
+После запуска ожидайте в вашей папке появление list_log.html ([открыть пример list_log.html в браузере](https://molushkax.github.io/lists/example_of_work/list_log.html))- пошагового отчета и папки graphviz/ с .svg файлами ([пример папки graphviz](example_of_work/graphviz))
 
 **Итог**
 
