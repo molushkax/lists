@@ -9,7 +9,7 @@ digraph list {
   n0 [label=<
     <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" BGCOLOR="#FFEBEE" COLOR="#B71C1C">
       <TR><TD PORT="idx" BGCOLOR="#E3E3E3" WIDTH="40"><B>0</B></TD></TR>
-      <TR><TD PORT="data" WIDTH="60">data: 67</TD></TR>
+      <TR><TD PORT="data" WIDTH="60">ptr: 0x8000421558</TD></TR>
       <TR><TD PORT="next" WIDTH="60">next: 1</TD></TR>
       <TR><TD PORT="prev" WIDTH="60">prev: 4</TD></TR>
     </TABLE>

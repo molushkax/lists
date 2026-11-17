@@ -336,7 +336,12 @@ void list_dump_dot (info_about_list* list, const char* filename) {
         fprintf(f, "  n%zu [label=<\n", i);
         fprintf(f, "    <TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" BGCOLOR=\"%s\" COLOR=\"%s\">\n", fillcolor, bordercolor);
         fprintf(f, "      <TR><TD PORT=\"idx\" BGCOLOR=\"#E3E3E3\" WIDTH=\"40\"><B>%zu</B></TD></TR>\n", i);
-        fprintf(f, "      <TR><TD PORT=\"data\" WIDTH=\"60\">data: %d</TD></TR>\n", n->data);
+        if (i == 0) {
+            fprintf(f, "      <TR><TD PORT=\"data\" WIDTH=\"60\">ptr: 0x%zx</TD></TR>\n", (size_t)(uintptr_t)n);
+        }
+        else {
+            fprintf(f, "      <TR><TD PORT=\"data\" WIDTH=\"60\">data: %d</TD></TR>\n", n->data);
+        }
         fprintf(f, "      <TR><TD PORT=\"next\" WIDTH=\"60\">next: %zu</TD></TR>\n", n->next);
         fprintf(f, "      <TR><TD PORT=\"prev\" WIDTH=\"60\">prev: %zu</TD></TR>\n", n->prev);
         fprintf(f, "    </TABLE>\n  >];\n\n");

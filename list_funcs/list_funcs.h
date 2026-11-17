@@ -2,7 +2,6 @@
 #define _LISTS_H_
 
 #define NDEBUG
-//TODO README
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
