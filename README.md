@@ -21,6 +21,7 @@
 # **Работа со списками**
 
 *функции*
+
 ```cpp
 инициализирует список
 list_error list_init          (info_about_list* list, size_t size_of_list);
